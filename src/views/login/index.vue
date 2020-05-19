@@ -4,7 +4,7 @@
     <van-nav-bar class="page-nav-bar" title="登录" />
 
     <!-- 登录表单 -->
-    <van-form @submit="onSubmit">
+    <van-form ref="loginForm" @submit="onSubmit">
       <van-field
         v-model="user.mobile"
         name="手机号"
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { login } from '@/api/user'
+import { login, sendSms } from '@/api/user'
 
 export default {
   name: 'LoginIndex',
@@ -60,7 +60,7 @@ export default {
   data () {
     return {
       user: {
-        mobile: '', // 手机号
+        mobile: '13711111111', // 手机号
         code: '' // 验证码
       },
       userFormRules: {
@@ -111,12 +111,21 @@ export default {
     },
 
     async onSendSms () {
+      console.log('11111')
       // 校验手机号
       try {
-        await this.$refs.loginForm.validata('mobile')
-        this.$toast('发送成功')
+        await this.$refs.loginForm.validate('mobile')
       } catch (err) {
-        console.log('验证失败', err)
+        return console.log('验证失败', err)
+      }
+
+      // 验证通过,显示倒计时
+      this.isCountDownShow = true
+
+      try {
+        await sendSms(this.user.mobile)
+      } catch (err) {
+        console.log('发送失败')
         this.isCountDownShow = false
         if (err.response.status === 429) {
           this.$toast('发送太急了，顶不住')
@@ -124,8 +133,6 @@ export default {
           this.$toast('发送失败，请一会再试')
         }
       }
-      // 验证通过,显示倒计时
-      this.isCountDownShow = true
     }
   }
 }
