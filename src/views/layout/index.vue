@@ -4,22 +4,22 @@
      <router-view/>
 
     <!-- 导航栏 -->
-<van-tabbar class="layout-tabbar" v-model="active" route="">
+<van-tabbar active-color="red" route class="layout-tabbar">
   <van-tabbar-item  to='/'>
     <i slot='icon' class='toutiao toutiao-shouye'></i>
-    <span>首页</span>
+    <span class="text">首页</span>
   </van-tabbar-item>
-    <van-tabbar-item to='qa'>
+    <van-tabbar-item  to='/qa'>
     <i slot='icon' class='toutiao toutiao-wenda'></i>
-    <span>问答</span>
+    <span class="text">问答</span>
   </van-tabbar-item>
-    <van-tabbar-item to='video'>
+    <van-tabbar-item to='/video'>
     <i slot='icon' class='toutiao toutiao-shipin'></i>
-    <span>视频</span>
+    <span class="text">视频</span>
   </van-tabbar-item>
-    <van-tabbar-item to='my' >
+    <van-tabbar-item to='/my' >
     <i slot='icon' class='toutiao toutiao-wode'></i>
-    <span>我的</span>
+    <span class="text">我的</span>
   </van-tabbar-item>
 </van-tabbar>
   </div>
@@ -30,7 +30,7 @@ export default {
   name: 'LayoutIndex',
   data () {
     return {
-      active: '0'
+
     }
   },
 
