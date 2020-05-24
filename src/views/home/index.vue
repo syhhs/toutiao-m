@@ -15,26 +15,51 @@
 
     <!-- 滚动导航 -->
     <van-tabs class='channel-tab' v-model="active" swipeable animated>
-       <van-tab title="标签 1">内容 1</van-tab>
-       <van-tab title="标签 2">内容 2</van-tab>
-       <van-tab title="标签 3">内容 3</van-tab>
-       <van-tab title="标签 4">内容 4</van-tab>
+       <van-tab
+       :title='channel.name'
+       v-for="channel in channels"
+       :key="channel.id"
+       >
+       <article-list :channel='channel'></article-list>
+       </van-tab>
+        <div slot='nav-right' class="placeholder"></div>
+       <div slot='nav-right' class="more">
+         <i class="toutiao toutiao-gengduo"></i>
+       </div>
 </van-tabs>
   </div>
 </template>
 
 <script>
+import { getUserChannels } from '@/api/user'
+import ArticleList from './components/article-list.vue'
+
 export default {
   name: 'homeIndex',
+  components: {
+    ArticleList
+  },
   data () {
     return {
-      active: '2'
+      active: '2',
+      channels: {}
     }
   },
 
-  methods: {},
+  methods: {
+    async loadChannels () {
+      try {
+        const { data } = await getUserChannels()
+        this.channels = data.data.channels
+        console.log(data)
+      } catch (error) {
+        this.$toast('获取频道数据失败')
+      }
+    }
+  },
 
   created () {
+    this.loadChannels()
   }
 }
 </script>
@@ -63,8 +88,7 @@ export default {
       font-size: 30px;
       color: #777777;
       min-width: 200px;
-      border-right: 1px solid #edeff3
-    }
+      border-right: 1px solid #edeff3;
     .van-tab--active{
       color: #333;
     }
@@ -76,9 +100,37 @@ export default {
       height: 8px;
       background-color: #3296fa;
       bottom: 8px;
+         }
+        }
+      }
+      .more{
+          position: fixed;
+          display: flex;
+          right: 0;
+          width: 66px;
+          height: 82px;
+          justify-content: center;
+          align-items: center;
+          background-color: #fff;
+          opacity: 0.902;
+          i.toutiao{
+            font-size: 33px;
+          }
 
-    }
-  }
+          &:before{
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 1px;
+            height: 100%;
+            background-image: url(~@/assets/gradient-gray-line.png);
+            background-size: contain;
+          }
+         }
+         .placeholder{
+           width: 66px;
+           height: 82px;
+           flex-shrink: 0;
+         }
 }
-
 </style>
