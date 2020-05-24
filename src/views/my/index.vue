@@ -7,9 +7,9 @@
           <van-image
             round
             class="avatar"
-             src="https://img.yzcdn.cn/vant/cat.jpeg"
+             :src="userInfo.photo"
            />
-           <span class='name'>黑马头条号</span>
+           <span class='name'>{{userInfo.name}}</span>
         </div>
         <div class="right">
           <van-button size="mini" round>编辑资料</van-button>
@@ -17,21 +17,21 @@
         </div>
       </div>
       <div class="data-stats">
+         <div class="data-item">
+          <span class="count">{{userInfo.art_count}}</span>
+          <span class="text">头条</span>
+        </div>
         <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">头条</span>
+          <span class="count">{{userInfo.follow_count}}</span>
+          <span class="text">关注</span>
+        </div>
+          <div class="data-item">
+          <span class="count">{{userInfo.like_count}}</span>
+          <span class="text">获赞</span>
         </div>
                 <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">头条</span>
-        </div>
-                <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">头条</span>
-        </div>
-                <div class="data-item">
-          <span class="count">10</span>
-          <span class="text">头条</span>
+          <span class="count">{{userInfo.fans_count}}</span>
+          <span class="text">粉丝</span>
         </div>
       </div>
     </div>
@@ -56,12 +56,13 @@
 
     <van-cell title="消息通知" is-link url="" />
     <van-cell title="小智同学" is-link url="" />
-    <van-cell v-if='user' class="logout-cell" title="退出登录" />
+    <van-cell v-if='user' clickable @click="loginOut" class="logout-cell" title="退出登录" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { getUserInfo } from '@/api/user'
 export default {
   name: 'myIndex',
   computed: {
@@ -69,12 +70,39 @@ export default {
   },
   data () {
     return {
+      userInfo: { }
     }
   },
 
-  methods: {},
+  methods: {
+    loginOut () {
+      // 清除本地和容器的user
+      this.$dialog.confirm({
+        title: '是否确认退出?'
+      })
+        .then(() => {
+          console.log('退出吧')
+          this.$store.commit('setUser', null)
+        })
+        .catch(() => {
+          // on cancel
+        })
+    },
 
+    async loadUserInfo () {
+      try {
+        const { data } = await getUserInfo()
+        this.userInfo = data.data
+        console.log(data)
+      } catch (error) {
+        this.$toast('获取个人信息失败')
+      }
+    }
+  },
   created () {
+    if (this.user) {
+      this.loadUserInfo()
+    }
   }
 }
 </script>
